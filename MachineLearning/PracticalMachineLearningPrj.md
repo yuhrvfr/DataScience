@@ -1,0 +1,140 @@
+---
+title: "PracticalMachineLearning"
+author: "Herve Yu"
+date: "Sunday, February 15, 2015"
+output: html_document
+---
+## Introduction:
+
+Using Machine learning method to predict Weight lifting exercises outcome.
+The data is provided by Qualitative Activity Recognition of Weight Lifting Exercises. This is the document http://groupware.les.inf.puc-rio.br/public/papers/2013.Velloso.QAR-WLE.pdf, the paragraph (5.1 Feature extraction and selection) describes the contents of the dataset. The exercises are classified into 5 classes: A, B, C, D, E. The datasets can be downloaded https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv and https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+### The question: 
+From the dataset provided, predict the class of the weight lefting exercise class.
+
+### The input are 2 sets of data:
+
+* Training set with 19622 rows of 160 features
+* Test set with 20 rows without the target prediction column "classe"
+
+### The approach:
+
+#### 1) To allow cross validation, the training dataset is split into subtraining and subtesting datasets.
+
+```r
+library(caret);library(rpart);library(rattle);library(rpart.plot);library(randomForest);library(xtable);set.seed(32323)
+training <- read.csv("pml-training.csv")
+# cross validation into subtrain and subtest
+insubtrain <- createDataPartition(y=training$classe,p=.75,list=FALSE)
+subtrain  <- training[insubtrain,];subtest   <- training[-insubtrain,]
+# display some variable class
+sapply(subtrain,class)
+```
+
+#### 2) The analysis is conducted on the subtraining dataset
+
+**Feature selection using data exploratory**
+Among the 160 variables in the subtrain dataset: some are irrelevant for weight lifting exercise analysis (user_name, new_windows, raw_timestamp_part_1,..), some are incompleted not usable as such, they might need estimations such as center, scale method, we might come back, but for now since have plenty of variables, all incomplete data will be put aside. In total 50 variables are retained. For clarity reason, please refer to **annexe A1** for code of this section and the list of variables retained.
+
+
+**Select the algorithm for maching learning :**
+
+Since the outcome is categorical, categorical model approach is more appropriate compare to linear model.
+
+**a) Tree with Principal Component analysis**
+
+
+```r
+prComp <- prcomp(subtrainb[,-c(54)]); preProc <- preProcess(subtrainb[,-c(54)],method="pca",pcaComp=10); subtrainbPC <- predict(preProc,subtrainb[,-c(54)])
+fitpca <- rpart(subtrainb$classe~.,data=subtrainbPC); pred <- predict(fitpca,subtrainbPC,type="class");
+xt <- table(pred, subtrain$classe);kable(xt, format = "markdown")
+```
+
+
+
+|   |    A|    B|    C|    D|   E|
+|:--|----:|----:|----:|----:|---:|
+|A  | 2383|  368|  513|  115| 392|
+|B  |  521| 1284|  351|  512| 655|
+|C  |  708|  423| 1386|  357| 531|
+|D  |  344|  451|   80| 1243| 347|
+|E  |  229|  322|  237|  185| 781|
+**b) Tree Model**
+
+```r
+fit2 <- rpart(classe ~ ., data = subtrainb)
+pred <- predict(fit2,subtrain,type="class")
+xt <- table(pred, subtrain$classe)
+xt <- table(pred, subtrain$classe);kable(xt, format = "markdown")
+```
+
+
+
+|   |    A|    B|    C|    D|    E|
+|:--|----:|----:|----:|----:|----:|
+|A  | 3795|  441|   47|  108|   14|
+|B  |  293| 2108|  284|  635|  510|
+|C  |    0|  154| 2024|   81|    8|
+|D  |   83|   63|  181| 1448|  141|
+|E  |   14|   82|   31|  140| 2033|
+**c) Random Forest Model**
+
+```r
+rf <- randomForest(classe~.,data=subtrainb);pred <- predict(rf,subtrain);xt <- table(pred, subtrain$classe);kable(xt, format = "markdown")
+```
+
+
+
+|   |    A|    B|    C|    D|    E|
+|:--|----:|----:|----:|----:|----:|
+|A  | 4185|    0|    0|    0|    0|
+|B  |    0| 2848|    0|    0|    0|
+|C  |    0|    0| 2567|    0|    0|
+|D  |    0|    0|    0| 2412|    0|
+|E  |    0|    0|    0|    0| 2706|
+**Compare the models and evaluate the error**
+Since those are categorical model, one of the common measures of errors is the accuracy returned by the confusion matrix. The Random forest model provides the highest accuracy on the sub-training set. We will select this model.
+
+#### 3) Predict on the result on the sub testing set with the Random forest model
+
+```r
+pred <- predict(rf,subtest); xt <- table(pred, subtest$classe)
+kable(xt, format = "markdown")
+```
+
+
+
+|   |    A|   B|   C|   D|   E|
+|:--|----:|---:|---:|---:|---:|
+|A  | 1395|   3|   0|   0|   0|
+|B  |    0| 946|   3|   0|   0|
+|C  |    0|   0| 852|   4|   0|
+|D  |    0|   0|   0| 800|   0|
+|E  |    0|   0|   0|   0| 901|
+The confusion matrix shows the model also provides a good result 99.8% on this cross-validation sub testing set. Note it is not as perfect as it was against the sub training set. This is expected, the prediction should be most accurate on the dataset, from which the model was built. In other words, **out of samples error is usually greater than in sample errors**.
+
+#### 4) Apply the model extracted from the training dataset to the testing dataset
+
+```r
+testing <- read.csv("pml-testing.csv");predtest <- predict(rf,testing);predtest
+```
+
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 
+ B  A  B  A  A  E  D  B  A  A  B  C  B  A  E  E  A  B  B  B 
+Levels: A B C D E
+
+#### Annexe A1
+
+**Reducing the dataset to the quantitative and complete data**
+
+inl <- function(x) {
+if (x %in% c("kurtosis_roll_belt","kurtosis_picth_belt","kurtosis_yaw_belt","skewness_roll_belt","skewness_roll_belt.1","skewness_yaw_belt","max_yaw_belt",
+"min_yaw_belt","amplitude_yaw_belt","kurtosis_roll_arm","kurtosis_picth_arm","kurtosis_yaw_arm","skewness_roll_arm","skewness_pitch_arm",  "skewness_yaw_arm","kurtosis_roll_dumbbell","kurtosis_picth_dumbbell","kurtosis_yaw_dumbbell","skewness_roll_dumbbell","skewness_pitch_dumbbell","skewness_yaw_dumbbell","amplitude_yaw_dumbbell","kurtosis_roll_forearm","kurtosis_picth_forearm",	"kurtosis_yaw_forearm",	"skewness_roll_forearm","skewness_pitch_forearm",	"skewness_yaw_forearm","max_yaw_forearm","min_yaw_forearm","X","max_roll_belt",	
+"max_picth_belt",	"min_roll_belt",	"min_pitch_belt",	"amplitude_roll_belt","amplitude_pitch_belt","var_total_accel_belt",	"avg_roll_belt","stddev_roll_belt","var_roll_belt","avg_pitch_belt",	"stddev_pitch_belt","var_pitch_belt",	"avg_yaw_belt",	"stddev_yaw_belt","var_yaw_belt","var_accel_arm",	"avg_roll_arm",	
+"stddev_roll_arm","var_roll_arm",	"avg_pitch_arm","stddev_pitch_arm",	"var_pitch_arm","avg_yaw_arm","stddev_yaw_arm",	"var_yaw_arm","max_roll_arm",	"max_picth_arm","max_yaw_arm",	"min_roll_arm",	"min_pitch_arm",	"min_yaw_arm",	"amplitude_roll_arm",	"amplitude_pitch_arm",	"amplitude_yaw_arm","max_roll_dumbbell",	"max_picth_dumbbell",	"max_yaw_dumbbell",	"min_roll_dumbbell",	"min_pitch_dumbbell",	"min_yaw_dumbbell","amplitude_roll_dumbbell","amplitude_pitch_dumbbell","var_accel_dumbbell",	"avg_roll_dumbbell",	"stddev_roll_dumbbell",	"var_roll_dumbbell",	"avg_pitch_dumbbell",	"stddev_pitch_dumbbell",	"var_pitch_dumbbell",	"avg_yaw_dumbbell",	"stddev_yaw_dumbbell",	"var_yaw_dumbbell","max_roll_forearm",	"max_picth_forearm",	"min_roll_forearm",	"min_pitch_forearm",	"amplitude_roll_forearm",	"amplitude_pitch_forearm","var_accel_forearm",	"avg_roll_forearm",	"stddev_roll_forearm","var_roll_forearm",	"avg_pitch_forearm",	"stddev_pitch_forearm",	"var_pitch_forearm",	"avg_yaw_forearm",	"stddev_yaw_forearm",	"var_yaw_forearm","amplitude_yaw_forearm","new_window","user_name",	"raw_timestamp_part_1",	"raw_timestamp_part_2",	"cvtd_timestamp")){  FALSE } else {  TRUE }}
+kp <- sapply(names(subtrain), inl);subtrainb <- subtrain[kp]
+
+
+**List of the variables retained in the model:** 
+
+num_window,roll_belt,pitch_belt,yaw_belt,total_accel_belt,gyros_belt_x,gyros_belt_y, gyros_belt_z,accel_belt_x,accel_belt_y,accel_belt_z,magnet_belt_x,magnet_belt_y  magnet_belt_z	roll_arm,pitch_arm,yaw_arm,total_accel_arm,gyros_arm_x,gyros_arm_y	gyros_arm_z,accel_arm_x,accel_arm_y,accel_arm_z,magnet_arm_x,magnet_arm_y	magnet_arm_z,roll_dumbbell,pitch_dumbbell,yaw_dumbbell,total_accel_dumbbell,	gyros_dumbbell_x,gyros_dumbbell_y,gyros_dumbbell_z,accel_dumbbell_x,accel_dumbbell_y,accel_dumbbell_z,magnet_dumbbell_x,magnet_dumbbell_y,magnet_dumbbell_z,	roll_forearm,pitch_forearm,yaw_forearm,total_accel_forearm,gyros_forearm_x,	gyros_forearm_y,gyros_forearm_z,accel_forearm_x,accel_forearm_y,accel_forearm_z,	magnet_forearm_x,magnet_forearm_y,magnet_forearm_z,classe.

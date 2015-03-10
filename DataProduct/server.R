@@ -6,8 +6,8 @@ fit <- lm(mpg~factor(am)+wt+hp+cyl+disp+drat+qsec+carb+vs,data=mtcars)
 sfit <- step(fit,trace=0)
 
 drawPlots <- function(x) {
-		   par(mfrow=c(1,2))
-     	   plot(mpg~wt,pch=19, xlab="Car weight (1000lbs)", col="darkgrey",
+           par(mfrow=c(1,2))
+           plot(mpg~wt,pch=19, xlab="Car weight (1000lbs)", col="darkgrey",
                 main="MPG over Car Weight")
            lmwt <- lm(mpg~wt)
            abline(lmwt,col="darkgrey",lwd=2)
@@ -23,12 +23,12 @@ drawPlots <- function(x) {
 shinyServer(
 
     function(input, output) {
-		output$mpgwt <- renderPlot({
+        output$mpgwt <- renderPlot({
 		     e <- data.frame(am=input$am,wt=input$wt,qsec=input$qsec)
              p <- predict(sfit,e)
 		     output$empg <- renderPrint({as.character(p)})
 		     x <- c(input$wt,input$qsec,p)
 		     drawPlots(x)
-        })
+            })
 	}
 )

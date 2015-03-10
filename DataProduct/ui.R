@@ -21,8 +21,8 @@ shinyUI(
 		    h3('Your estimated MPG is'),
 		    verbatimTextOutput("empg"),
 		    plotOutput("mpgwt"),
-			helpText("Note: The Estimated MPG is represented ", 
+		    helpText("Note: The Estimated MPG is represented ", 
                      "by the blue triangles on the plots")
-		)
+		   )
 	)
 )

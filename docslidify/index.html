@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Estimate Car MPG</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Estimate Car MPG">
+  <meta name="author" content="Herve Yu">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Estimate Car MPG</h1>
+    <h2>Estimate Car MPG consumption Simple Shiny Application</h2>
+    <p>Herve Yu<br/>Data Analysis Learner</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Summary of the goal</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Predict MPG consumption of a car based on</p>
+
+<ol>
+<li>Transmission Type</li>
+<li>Weight</li>
+<li>Quarter Miles per second</li>
+</ol>
+
+<p>The prediction trained on mtcars dataset extracted from the 1974 Motor Trend US magazineperformance for 32 automobiles (197374 models), using linear regression.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Regression Analysis</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><strong>The general formula:</strong></p>
+
+<ul>
+<li>Automatic transmission: MPG = 9.62 3.92 * Weight + 1.22 * Quarter miles time</li>
+<li>Manual transmission: MPG = 12.56 3.92 * Weight + 1.22 * Quarter miles time</li>
+<li>The model predict an actual MPG with a variation of + or 4.9 MPG from the predicted MPG.</li>
+<li>Units of measure: Weight in 1000 lbs, Quarter Mile time in seconds. </li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Simulation with Shiny Apps</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><strong>Deployed at shinyapps.oi website</strong></p>
+
+<ul>
+<li><a href="https://yuhrvfr.shinyapps.io/proj/">https://yuhrvfr.shinyapps.io/proj/</a></li>
+</ul>
+
+<p><strong>Sidebar for data entry</strong></p>
+
+<ul>
+<li>Radio button for transmission selection</li>
+<li>Slider for Weight manipulation</li>
+<li>Textbox for Quarter mile second entry</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Simulation with Shiny Apps</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><strong>Main block for Result Display</strong></p>
+
+<ul>
+<li>Estimated MPG based on entered criteria</li>
+<li>Left Plot MPG over Weight</li>
+<li>Right Plot MPG over Quarter Miles per second</li>
+<li><strong><em>Estimated value will appear as a triangle point on the plots</em></strong></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Summary of the goal'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Regression Analysis'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Simulation with Shiny Apps'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Simulation with Shiny Apps'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

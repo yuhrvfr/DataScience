@@ -19,11 +19,12 @@ Regression Analysis
 
 
 **The general formula:**
-
-- Automatic transmission: MPG = 9.62 3.92 * Weight + 1.22 * Quarter miles time
-- Manual transmission: MPG = 12.56 3.92 * Weight + 1.22 * Quarter miles time
-- The model predict an actual MPG with a variation of + or 4.9 MPG from the predicted MPG.
-- Units of measure: Weight in 1000 lbs, Quarter Mile time in seconds. 
+```{r echo=FALSE,size=77}
+mpg <- mtcars$mpg;wt  <- mtcars$wt;qsec<- mtcars$qsec
+fit <- lm(mpg~factor(am)+wt+hp+cyl+disp+drat+qsec+carb+vs,data=mtcars); sfit <- step(fit,trace=0); sfit
+```
+- Automatic transmission: MPG = 9.62 - 3.92 * Weight + 1.22 * Quarter miles time
+- Manual transmission: MPG = 12.56 - 3.92 * Weight + 1.22 * Quarter miles time
 
 Simulation with Shiny Apps
 ========================================================
@@ -37,6 +38,9 @@ Simulation with Shiny Apps
 - Radio button for transmission selection
 - Slider for Weight manipulation
 - Textbox for Quarter mile second entry
+- Units of measure: Weight in 1000 lbs, Quarter Mile time in seconds. 
+- The model predict an actual MPG with a variation of + or 4.9 MPG from the predicted MPG.
+
 
 Simulation with Shiny Apps
 ========================================================

@@ -1,7 +1,7 @@
 Estimate Car MPG consumption Simple Shiny Application
 ========================================================
 author: Herve Yu
-date: Sun Mar 08 18:44:18 2015
+date: Wed Mar 18 22:03:20 2015
 
 Summary of the goal
 ========================================================
@@ -20,10 +20,17 @@ Regression Analysis
 
 **The general formula:**
 
-- Automatic transmission: MPG = 9.62 3.92 * Weight + 1.22 * Quarter miles time
-- Manual transmission: MPG = 12.56 3.92 * Weight + 1.22 * Quarter miles time
-- The model predict an actual MPG with a variation of + or 4.9 MPG from the predicted MPG.
-- Units of measure: Weight in 1000 lbs, Quarter Mile time in seconds. 
+```
+
+Call:
+lm(formula = mpg ~ factor(am) + wt + qsec, data = mtcars)
+
+Coefficients:
+(Intercept)  factor(am)1           wt         qsec  
+      9.618        2.936       -3.917        1.226  
+```
+- Automatic transmission: MPG = 9.62 - 3.92 * Weight + 1.22 * Quarter miles time
+- Manual transmission: MPG = 12.56 - 3.92 * Weight + 1.22 * Quarter miles time
 
 Simulation with Shiny Apps
 ========================================================
@@ -37,6 +44,9 @@ Simulation with Shiny Apps
 - Radio button for transmission selection
 - Slider for Weight manipulation
 - Textbox for Quarter mile second entry
+- Units of measure: Weight in 1000 lbs, Quarter Mile time in seconds. 
+- The model predict an actual MPG with a variation of + or 4.9 MPG from the predicted MPG.
+
 
 Simulation with Shiny Apps
 ========================================================
